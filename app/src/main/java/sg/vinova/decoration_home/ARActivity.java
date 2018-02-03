@@ -16,6 +16,7 @@ import com.maxst.ar.TrackerManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 public class ARActivity extends Activity {
@@ -63,13 +64,20 @@ public class ARActivity extends Activity {
             Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
             v1.setDrawingCacheEnabled(false);
 
-            File imageFile = new File(mPath);
+            final File imageFile = new File(mPath);
 
             FileOutputStream outputStream = new FileOutputStream(imageFile);
             int quality = 100;
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
             outputStream.flush();
             outputStream.close();
+
+            showSnackBar(v1, "Open File", "Open", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openScreenshot(imageFile);
+                }
+            });
 
         } catch (Throwable e) {
             // Several error may come out with file handling or DOM
@@ -88,5 +96,34 @@ public class ARActivity extends Activity {
         Uri uri = Uri.fromFile(imageFile);
         intent.setDataAndType(uri, "image/*");
         startActivity(intent);
+    }
+
+    /**
+     * Listing all folder file name
+     * @param path root folder name of asset folder
+     *  If the root folder is the asset folder then call it with listAssetFiles("");
+     * @return is have folder inside
+     */
+    private boolean listAssetFiles(String path) {
+
+        String [] list;
+        try {
+            list = getAssets().list(path);
+            if (list.length > 0) {
+                // This is a folder
+                for (String file : list) {
+                    if (!listAssetFiles(path + "/" + file))
+                        return false;
+                    else {
+                        // This is a file
+                        // TODO: add file name to an array list
+                    }
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
     }
 }
