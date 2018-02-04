@@ -59,6 +59,7 @@ dependencies {
     compile files("$MAXSTAR_SDK_DIR/com.osterhoutgroup.api.ext.jar")
     // 3d Engine
 
+    implementation 'de.javagl:obj:0.2.1'
 
     implementation 'com.android.support:design:26.1.0'
     implementation 'commons-io:commons-io:2.5'
