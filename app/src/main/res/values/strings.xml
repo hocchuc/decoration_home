@@ -10,4 +10,38 @@
     <string name="start_tracking">Start tracking</string>
     <string name="stop_tracking">Stop tracking</string>
     <string name="camera_open_fail">Camera open fails. Please check camera permission is allowed</string>
+
+    <!-- Load settings -->
+    <string name="model_name">Model name</string>
+    <string name="texture">Texture</string>
+    <string name="invert_texture_coordinates">Invert texture coordinates</string>
+    <string name="cancel">Cancel</string>
+    <string name="load">Load</string>
+    <string name="load_model">Load Model</string>
+
+    <!-- GL Settings -->
+    <string name="toggle_wireframe">Toggle wireframe</string>
+    <string name="toggle_textures">Toggle textures</string>
+    <string name="toggle_lights">Toggle lights</string>
+    <string name="toggle_boundingbox">Toggle bounding box</string>
+    <string name="load_texture">Load texture</string>
+    <string name="action_settings">Settings</string>
+    <!-- Activities -->
+    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_demo">Demo</string>
+    <string name="title_activity_text">Text</string>
+    <string name="title_activity_model">Model</string>
+    <!-- Demo menu -->
+    <string name="item">item</string>
+
+    <string-array name="menu_items">
+        <item>Load Model</item>
+        <item>Models</item>
+        <item>Demo</item>
+        <!-- <item>Settings</item> -->
+        <item>Help</item>
+        <item>About</item>
+        <item>Exit</item>
+    </string-array>
+    <string name="image">image</string>
 </resources>

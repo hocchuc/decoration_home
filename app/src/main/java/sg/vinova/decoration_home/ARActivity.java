@@ -105,8 +105,7 @@ public class ARActivity extends Activity {
      * @return is have folder inside
      */
     private boolean listAssetFiles(String path) {
-
-        String [] list;
+        String[] list;
         try {
             list = getAssets().list(path);
             if (list.length > 0) {
