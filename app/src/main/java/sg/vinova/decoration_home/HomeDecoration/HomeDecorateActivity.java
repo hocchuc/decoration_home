@@ -3,7 +3,9 @@ package sg.vinova.decoration_home.HomeDecoration;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +22,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import sg.vinova.decoration_home.ARActivity;
 import sg.vinova.decoration_home.R;
+import sg.vinova.decoration_home.services.SceneLoader;
 import sg.vinova.decoration_home.util.SampleUtil;
+import sg.vinova.decoration_home.view.ModelSurfaceView;
 
 public class HomeDecorateActivity extends ARActivity implements View.OnTouchListener {
 
@@ -30,9 +34,57 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
     @BindView(R.id.start)
     AppCompatButton btnStart;
 
+    private static final int REQUEST_CODE_OPEN_FILE = 1000;
+
+    private String paramAssetDir;
+    private String paramAssetFilename;
+    /**
+     * The file to load. Passed as input parameter
+     */
+    private String paramFilename;
+    /**
+     * Enter into Android Immersive mode so the renderer is full screen or not
+     */
+    private boolean immersiveMode = true;
+    /**
+     * Background GL clear color. Default is light gray
+     */
+    private float[] backgroundColor = new float[]{0.2f, 0.2f, 0.2f, 1.0f};
+
+    private ModelSurfaceView gLView;
+
+    private SceneLoader scene;
+
+    private Handler handler;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Try to get input parameters
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            this.paramAssetDir = b.getString("assetDir");
+            this.paramAssetFilename = b.getString("assetFilename");
+            this.paramFilename = b.getString("uri");
+            this.immersiveMode = "true".equalsIgnoreCase(b.getString("immersiveMode"));
+            try{
+                String[] backgroundColors = b.getString("backgroundColor").split(" ");
+                backgroundColor[0] = Float.parseFloat(backgroundColors[0]);
+                backgroundColor[1] = Float.parseFloat(backgroundColors[1]);
+                backgroundColor[2] = Float.parseFloat(backgroundColors[2]);
+                backgroundColor[3] = Float.parseFloat(backgroundColors[3]);
+            }catch(Exception ex){
+                // Assuming default background color
+            }
+        }
+        Log.i("Renderer", "Params: assetDir '" + paramAssetDir + "', assetFilename '" + paramAssetFilename + "', uri '"
+                + paramFilename + "'");
+
+        handler = new Handler(getMainLooper());
+        // Create a GLSurfaceView instance and set it
+        // as the ContentView for this Activity.
+
         setContentView(R.layout.activity_home_decor);
         ButterKnife.bind(this);
 
@@ -40,6 +92,8 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
     }
 
     private void init() {
+
+
         instantTargetRenderer = new InstantTrackerRenderer(this);
         glSurfaceView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
         glSurfaceView.setEGLContextClientVersion(2);
@@ -108,7 +162,9 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
     private float touchStartY;
     private float translationX;
     private float translationY;
-
+    private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
+    private float mPreviousX;
+    private float mPreviousY;
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         float x = event.getX();
@@ -128,6 +184,9 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
                 TrackerManager.getInstance().getWorldPositionFromScreenCoordinate(screen, world);
                 translationX = world[0];
                 translationY = world[1];
+
+
+
                 break;
             }
 
@@ -149,6 +208,10 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
                     float posY = world[1];
 
                     instantTargetRenderer.setTranslate(posX - translationX, posY - translationY);
+                    instantTargetRenderer.setAngle(
+                            instantTargetRenderer.getAngle() +
+                                    ((dx + dy) * TOUCH_SCALE_FACTOR));
+
                     translationX = posX;
                     translationY = posY;
                 }

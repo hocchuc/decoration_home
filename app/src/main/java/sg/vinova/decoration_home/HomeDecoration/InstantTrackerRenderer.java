@@ -27,7 +27,7 @@ import javax.microedition.khronos.opengles.GL10;
 class InstantTrackerRenderer implements Renderer {
 
 	public static final String TAG = InstantTrackerRenderer.class.getSimpleName();
-
+	public volatile float mAngle;
 	private int surfaceWidth;
 	private int surfaceHeight;
 	private BackgroundRenderHelper backgroundRenderHelper;
@@ -43,6 +43,9 @@ class InstantTrackerRenderer implements Renderer {
 
 	@Override
 	public void onDrawFrame(GL10 unused) {
+		float[] scratch = new float[16];
+
+
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 		GLES20.glViewport(0, 0, surfaceWidth, surfaceHeight);
 
@@ -64,6 +67,7 @@ class InstantTrackerRenderer implements Renderer {
 		texturedCube.setTransform(trackable.getPoseMatrix());
 		texturedCube.setTranslate(posX, posY, -0.05f);
 		texturedCube.setProjectionMatrix(projectionMatrix);
+
 		texturedCube.draw();
 	}
 
@@ -101,4 +105,14 @@ class InstantTrackerRenderer implements Renderer {
 		posX = 0;
 		posY = 0;
 	}
+
+	public float getAngle() {
+		return mAngle;
+	}
+
+	public void setAngle(float angle) {
+		mAngle = angle;
+	}
+
+
 }

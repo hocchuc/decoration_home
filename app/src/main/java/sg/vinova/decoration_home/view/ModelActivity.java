@@ -80,11 +80,6 @@ public class ModelActivity extends Activity {
 
 		handler = new Handler(getMainLooper());
 
-		// Create a GLSurfaceView instance and set it
-		// as the ContentView for this Activity.
-		gLView = new ModelSurfaceView(this);
-		setContentView(gLView);
-
 		// Create our 3D sceneario
 		if (paramFilename == null && paramAssetFilename == null) {
 			scene = new ExampleSceneLoader(this);

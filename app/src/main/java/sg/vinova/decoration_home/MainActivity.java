@@ -37,7 +37,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void changeActivity(Class activity) {
         Intent intent = new Intent(this, activity);
         startActivity(intent);
-        finish();
     }
 
     @Override
