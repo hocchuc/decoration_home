@@ -17,6 +17,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import sg.vinova.decoration_home.arobject.TexturedCube;
+import sg.vinova.decoration_home.arobject.TileObject;
 import sg.vinova.decoration_home.util.BackgroundRenderHelper;
 
 public class TileTrackerRenderer implements GLSurfaceView.Renderer {
@@ -27,7 +28,7 @@ public class TileTrackerRenderer implements GLSurfaceView.Renderer {
     private int surfaceHeight;
     private BackgroundRenderHelper backgroundRenderHelper;
 
-    private TexturedCube texturedCube;
+    private TileObject texturedCube;
     private float posX;
     private float posY;
     private Activity activity;
@@ -80,7 +81,7 @@ public class TileTrackerRenderer implements GLSurfaceView.Renderer {
         backgroundRenderHelper = new BackgroundRenderHelper();
         backgroundRenderHelper.init();
 
-        texturedCube = new TexturedCube();
+        texturedCube = new TileObject();
         Bitmap bitmap = MaxstARUtil.getBitmapFromAsset("Tile/bathroom-tiles.jpg", activity.getAssets());
         texturedCube.setTextureBitmap(bitmap);
 
