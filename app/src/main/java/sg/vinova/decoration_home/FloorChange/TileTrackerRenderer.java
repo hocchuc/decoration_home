@@ -81,7 +81,7 @@ public class TileTrackerRenderer implements GLSurfaceView.Renderer {
         backgroundRenderHelper.init();
 
         texturedCube = new TexturedCube();
-        Bitmap bitmap = MaxstARUtil.getBitmapFromAsset("Tile/bathroom-tile.jpg", activity.getAssets());
+        Bitmap bitmap = MaxstARUtil.getBitmapFromAsset("Tile/bathroom-tiles.jpg", activity.getAssets());
         texturedCube.setTextureBitmap(bitmap);
 
         MaxstAR.onSurfaceCreated();

@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             break;
             case R.id.wall_decor: {
-                changeActivity(WallDecorateActivity.class);
+               // changeActivity(WallDecorateActivity.class);
 
             }
             break;
