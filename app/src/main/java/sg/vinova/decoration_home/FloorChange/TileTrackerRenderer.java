@@ -16,6 +16,7 @@ import com.maxst.ar.TrackingState;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import sg.vinova.decoration_home.arobject.ColoredCube;
 import sg.vinova.decoration_home.arobject.TexturedCube;
 import sg.vinova.decoration_home.arobject.TileObject;
 import sg.vinova.decoration_home.util.BackgroundRenderHelper;
@@ -28,7 +29,7 @@ public class TileTrackerRenderer implements GLSurfaceView.Renderer {
     private int surfaceHeight;
     private BackgroundRenderHelper backgroundRenderHelper;
 
-    private TileObject texturedCube;
+    private ColoredCube texturedCube;
     private float posX;
     private float posY;
     private Activity activity;
@@ -81,9 +82,10 @@ public class TileTrackerRenderer implements GLSurfaceView.Renderer {
         backgroundRenderHelper = new BackgroundRenderHelper();
         backgroundRenderHelper.init();
 
-        texturedCube = new TileObject();
+        texturedCube = new ColoredCube();
+
         Bitmap bitmap = MaxstARUtil.getBitmapFromAsset("Tile/bathroom-tiles.jpg", activity.getAssets());
-        texturedCube.setTextureBitmap(bitmap);
+        //texturedCube.setTextureBitmap(bitmap);
 
         MaxstAR.onSurfaceCreated();
     }

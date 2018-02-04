@@ -17,6 +17,7 @@ import com.maxst.ar.TrackerManager;
 import com.maxst.ar.TrackingResult;
 import com.maxst.ar.TrackingState;
 
+import sg.vinova.decoration_home.arobject.ChariObject;
 import sg.vinova.decoration_home.arobject.TexturedCube;
 import sg.vinova.decoration_home.util.BackgroundRenderHelper;
 
@@ -31,7 +32,7 @@ class InstantTrackerRenderer implements Renderer {
 	private int surfaceWidth;
 	private int surfaceHeight;
 	private BackgroundRenderHelper backgroundRenderHelper;
-
+	private ChariObject chariObject;
 	private TexturedCube texturedCube;
 	private float posX;
 	private float posY;
@@ -61,10 +62,10 @@ class InstantTrackerRenderer implements Renderer {
 
 		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
-		texturedCube.setTransform(trackable.getPoseMatrix());
-		texturedCube.setTranslate(posX, posY, -0.05f);
-		texturedCube.setProjectionMatrix(projectionMatrix);
-		texturedCube.draw();
+		chariObject.setTransform(trackable.getPoseMatrix());
+		chariObject.setTranslate(posX, posY, -0.05f);
+		chariObject.setProjectionMatrix(projectionMatrix);
+		chariObject.draw();
 	}
 
 	@Override
@@ -73,7 +74,7 @@ class InstantTrackerRenderer implements Renderer {
 		surfaceWidth = width;
 		surfaceHeight = height;
 
-		texturedCube.setScale(0.3f, 0.3f, 0.1f);
+		chariObject.setScale(0.3f, 0.3f, 0.1f);
 
 		MaxstAR.onSurfaceChanged(width, height);
 	}
@@ -85,9 +86,9 @@ class InstantTrackerRenderer implements Renderer {
 		backgroundRenderHelper = new BackgroundRenderHelper();
 		backgroundRenderHelper.init();
 
-		texturedCube = new TexturedCube();
+		chariObject = new ChariObject();
 		Bitmap bitmap = MaxstARUtil.getBitmapFromAsset("MaxstAR_Cube.png", activity.getAssets());
-		texturedCube.setTextureBitmap(bitmap);
+		chariObject.setTextureBitmap(bitmap);
 
 		MaxstAR.onSurfaceCreated();
 	}
