@@ -42,7 +42,7 @@ public class FloorChangeActivity extends ARActivity implements View.OnTouchListe
 
     private void init() {
         tileTrackerRenderer = new TileTrackerRenderer(this);
-        glSurfaceView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
+        //glSurfaceView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(tileTrackerRenderer);
         glSurfaceView.setOnTouchListener(this);
@@ -157,6 +157,7 @@ public class FloorChangeActivity extends ARActivity implements View.OnTouchListe
             }
 
             case MotionEvent.ACTION_UP:
+
                 break;
         }
 

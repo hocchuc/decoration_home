@@ -1,6 +1,6 @@
 # Blender3D v245 OBJ File: table_and_chairs2.blend
 # www.blender3d.org
-mtllib chair_mtl.mtl
+mtllib chair.mtl
 o chair.004_Cube.012
 v -0.537301 0.392777 -0.346918
 v -0.135628 0.401021 -0.351818

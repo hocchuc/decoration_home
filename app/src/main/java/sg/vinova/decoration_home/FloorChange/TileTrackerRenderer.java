@@ -68,7 +68,7 @@ public class TileTrackerRenderer implements GLSurfaceView.Renderer {
         surfaceWidth = width;
         surfaceHeight = height;
 
-        texturedCube.setScale(0.3f, 0.3f, 0.01f);
+        texturedCube.setScale(0.3f, 0.3f, 0.05f);
 
         MaxstAR.onSurfaceChanged(width, height);
     }

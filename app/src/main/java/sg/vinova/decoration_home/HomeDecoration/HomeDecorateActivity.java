@@ -1,12 +1,17 @@
 package sg.vinova.decoration_home.HomeDecoration;
 
 import android.app.Activity;
+import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatButton;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.maxst.ar.CameraDevice;
@@ -15,6 +20,23 @@ import com.maxst.ar.ResultCode;
 import com.maxst.ar.SensorDevice;
 import com.maxst.ar.TrackerManager;
 
+import org.rajawali3d.Object3D;
+import org.rajawali3d.animation.Animation;
+import org.rajawali3d.animation.Animation3D;
+import org.rajawali3d.animation.EllipticalOrbitAnimation3D;
+import org.rajawali3d.animation.RotateOnAxisAnimation;
+import org.rajawali3d.lights.PointLight;
+import org.rajawali3d.loader.LoaderOBJ;
+import org.rajawali3d.loader.ParsingException;
+import org.rajawali3d.math.vector.Vector3;
+import org.rajawali3d.renderer.ISurfaceRenderer;
+import org.rajawali3d.renderer.Renderer;
+import org.rajawali3d.view.IDisplay;
+import org.rajawali3d.view.ISurface;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,37 +44,54 @@ import sg.vinova.decoration_home.ARActivity;
 import sg.vinova.decoration_home.R;
 import sg.vinova.decoration_home.util.SampleUtil;
 
-public class HomeDecorateActivity extends ARActivity implements View.OnTouchListener {
+public class HomeDecorateActivity extends ARActivity implements View.OnTouchListener, IDisplay {
 
     private InstantTrackerRenderer instantTargetRenderer;
     private int preferCameraResolution = 0;
     private GLSurfaceView glSurfaceView;
     @BindView(R.id.start)
     AppCompatButton btnStart;
+    @BindView(R.id.rajwali_surface)
+    ISurface mRenderSurface;
+
+    ISurfaceRenderer mRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_decor);
         ButterKnife.bind(this);
-
+        preferCameraResolution = getSharedPreferences(SampleUtil.PREF_NAME, Activity.MODE_PRIVATE).getInt(SampleUtil.PREF_KEY_CAM_RESOLUTION, 0);
+        mRenderSurface = (ISurface) findViewById(R.id.rajwali_surface);
         init();
+
+
     }
 
-    private void init() {
-        instantTargetRenderer = new InstantTrackerRenderer(this);
-        glSurfaceView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
-        glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(instantTargetRenderer);
-        glSurfaceView.setOnTouchListener(this);
 
-        preferCameraResolution = getSharedPreferences(SampleUtil.PREF_NAME, Activity.MODE_PRIVATE).getInt(SampleUtil.PREF_KEY_CAM_RESOLUTION, 0);
+
+    private void init() {
+        // Create the renderer
+        mRenderer = createRenderer();
+        onBeforeApplyRenderer();
+        applyRenderer();
+
+        }
+
+    protected void onBeforeApplyRenderer() {
+
+    }
+
+    @CallSuper
+    protected void applyRenderer() {
+        mRenderSurface.setSurfaceRenderer(mRenderer);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        glSurfaceView.onResume();
+        mRenderer.onResume();
+
         SensorDevice.getInstance().start();
         TrackerManager.getInstance().startTracker(TrackerManager.TRACKER_TYPE_INSTANT);
 
@@ -80,7 +119,8 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
     @Override
     protected void onPause() {
         super.onPause();
-        glSurfaceView.onPause();
+
+        mRenderer.onPause();
 
         TrackerManager.getInstance().quitFindingSurface();
         TrackerManager.getInstance().stopTracker();
@@ -163,5 +203,85 @@ public class HomeDecorateActivity extends ARActivity implements View.OnTouchList
     }
 
 
+    @Override
+    public ISurfaceRenderer createRenderer() {
+        return new LoadModelRenderer(HomeDecorateActivity.this,HomeDecorateActivity.this);
+    }
 
+
+    protected static abstract class AExampleRenderer extends Renderer {
+
+        final HomeDecorateActivity activity;
+
+        public AExampleRenderer(Context context, @Nullable HomeDecorateActivity activity) {
+            super(context);
+            this.activity = activity;
+        }
+
+        @Override
+        public void onRenderSurfaceCreated(EGLConfig config, GL10 gl, int width, int height) {
+
+            super.onRenderSurfaceCreated(config, gl, width, height);
+        }
+
+        @Override
+        public void onOffsetsChanged(float xOffset, float yOffset, float xOffsetStep, float yOffsetStep, int xPixelOffset, int yPixelOffset) {
+        }
+
+        @Override
+        public void onTouchEvent(MotionEvent event) {
+        }
+
+    }
+
+
+    private final class LoadModelRenderer extends AExampleRenderer {
+        private PointLight mLight;
+        private Object3D mObjectGroup;
+        private Animation3D mCameraAnim, mLightAnim;
+
+        public LoadModelRenderer(Context context, @Nullable HomeDecorateActivity activity) {
+            super(context, activity);
+        }
+
+        @Override
+        protected void initScene() {
+            mLight = new PointLight();
+            mLight.setPosition(0, 0, 4);
+            mLight.setPower(3);
+
+            getCurrentScene().addLight(mLight);
+            getCurrentCamera().setZ(16);
+
+            LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(),
+                    mTextureManager, R.raw.chair);
+            try {
+                objParser.parse();
+                mObjectGroup = objParser.getParsedObject();
+                getCurrentScene().addChild(mObjectGroup);
+
+                mCameraAnim = new RotateOnAxisAnimation(Vector3.Axis.Y, 360);
+                mCameraAnim.setDurationMilliseconds(8000);
+                mCameraAnim.setRepeatMode(Animation.RepeatMode.INFINITE);
+                mCameraAnim.setTransformable3D(mObjectGroup);
+            } catch (ParsingException e) {
+                e.printStackTrace();
+            }
+
+            mLightAnim = new EllipticalOrbitAnimation3D(new Vector3(),
+                    new Vector3(0, 10, 0), Vector3.getAxisVector(Vector3.Axis.Z), 0,
+                    360, EllipticalOrbitAnimation3D.OrbitDirection.CLOCKWISE);
+
+            mLightAnim.setDurationMilliseconds(3000);
+            mLightAnim.setRepeatMode(Animation.RepeatMode.INFINITE);
+            mLightAnim.setTransformable3D(mLight);
+
+            getCurrentScene().registerAnimation(mCameraAnim);
+            getCurrentScene().registerAnimation(mLightAnim);
+
+            mCameraAnim.play();
+            mLightAnim.play();
+        }
+
+    }
 }
