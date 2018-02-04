@@ -58,8 +58,7 @@ dependencies {
     compile files("$MAXSTAR_SDK_DIR/MaxstAR.jar")
     compile files("$MAXSTAR_SDK_DIR/com.osterhoutgroup.api.ext.jar")
     // 3d Engine
-
-
+    compile 'org.rajawali3d:rajawali:1.1.970'
     implementation 'com.android.support:design:26.1.0'
     implementation 'commons-io:commons-io:2.5'
 
