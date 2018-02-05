@@ -74,7 +74,7 @@ class InstantTrackerRenderer implements Renderer {
 		surfaceWidth = width;
 		surfaceHeight = height;
 
-		chariObject.setScale(0.3f, 0.3f, 0.1f);
+		chariObject.setScale(0.3f, 0.3f, 1f);
 
 		MaxstAR.onSurfaceChanged(width, height);
 	}
